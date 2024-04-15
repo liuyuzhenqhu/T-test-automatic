@@ -1,0 +1,68 @@
+#单样本t检验
+# 单样本T检验的示例数据
+exam_scores <- c(82, 78, 85, 88, 90, 79, 83, 87, 84, 81)
+# 执行单样本T检验
+t_result <- t.test(exam_scores, mu = 80)
+# 显示结果
+print(t_result)
+
+#配对样本T检验
+# 配对样本T检验的示例数据
+before_test <- c(75, 80, 70, 85, 78)
+after_test <- c(80, 85, 75, 90, 82)
+
+# 执行配对样本T检验
+t_result <- t.test(before_test, after_test, paired = TRUE)
+
+# 显示结果
+print(t_result)
+
+#独立样本t检验
+# 独立样本T检验的示例数据
+male_scores <- c(80, 85, 75, 88, 90)
+female_scores <- c(78, 82, 79, 86, 88)
+
+# 执行独立样本T检验
+t_result <- t.test(male_scores, female_scores)
+
+# 显示结果
+print(t_result)
+
+
+# 批量t检验示例数据
+group1 <- c(11, 12, 9, 18, 22)
+group2 <- c(15, 22, 28, 32, 38)
+group3 <- c(18, 21, 27, 33, 37)
+group4 <- c(23, 27, 29, 31, 35)
+group5 <- c(17, 19, 22, 28, 32)
+group6 <- c(84, 68, 52, 36, 40)
+
+# 将数据放入列表
+data_list <- list(group1, group2, group3, group4, group5, group6)
+
+# 执行批量独立样本T检验
+results <- data.frame(Group1 = character(), Group2 = character(), P_Value = numeric(), Significance = character())
+
+n_groups <- length(data_list)
+for (i in 1:(n_groups - 1)) {
+  for (j in (i + 1):n_groups) {
+    t_result <- t.test(data_list[[i]], data_list[[j]])
+    
+    # 根据p值确定显著性标记
+    if (t_result$p.value < 0.001) {
+      significance <- "***"
+    } else if (t_result$p.value < 0.01) {
+      significance <- "**"
+    } else if (t_result$p.value < 0.05) {
+      significance <- "*"
+    } else {
+      significance <- "ns"
+    }
+    
+    # 提取关键信息并添加到结果表格中
+    results <- rbind(results, data.frame(Group1 = paste("Group", i), Group2 = paste("Group", j), P_Value = t_result$p.value, Significance = significance))
+  }
+}
+
+# 显示结果表格
+print(results)
